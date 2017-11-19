@@ -58,7 +58,9 @@ public class ZookeeperClient {
 	@Test
 	public void zookeeperCreate() throws KeeperException, InterruptedException{
 		//上传的数据可以是任何类型，但都要转成byte[]
-		String createNode = zooKeeperClient.create("/eclipse", "hello".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.EPHEMERAL);
+		String createNode = zooKeeperClient.create("/eclipse04", "hello".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		//String nodeCreated = zooKeeperClient.create("/eclipse03", "hellozk".getBytes(), Ids.OPEN_ACL_UNSAFE, CreateMode.PERSISTENT);
+		
 		//System.out.println("返回创建的节点:" + createNode);
 	}
 	
@@ -66,12 +68,9 @@ public class ZookeeperClient {
 	@Test
 	public void zookeeperExists() throws KeeperException, InterruptedException{
 		//Stat即封装起来的一些数据
-		Stat exists = zooKeeperClient.exists("/eclipse", false);
-		if(exists == null){
-			System.out.println("子节点不存在......");
-		}else{
-			System.out.println("子节点存在......");
-		}
+		Stat stat = zooKeeperClient.exists("/eclipse04", false);
+		System.out.println(stat==null?"not exist":"exist");
+		
 	}
 	
 	//获取子节点
@@ -87,5 +86,27 @@ public class ZookeeperClient {
 	}
 	
 	
+	//获取到zNode的数据
+	@Test
+	public void getData() throws KeeperException, InterruptedException{
+		byte[] data = zooKeeperClient.getData("/eclipse04", false, null);
+		System.out.println(new String(data));
+	}
+	
+	//删除zNode
+	@Test
+	public void deleteZnode() throws InterruptedException, KeeperException{
+		//参数2:指定要删除的版本，-1表示删除所有版本。
+		zooKeeperClient.delete("/eclipse04", -1);
+	}
+	
+	
+	//为zNode添加值
+	@Test
+	public void setDate() throws KeeperException, InterruptedException{
+		zooKeeperClient.setData("/eclipse04", "I am so happy".getBytes(), -1);
+		byte[] data = zooKeeperClient.getData("/eclipse04", false, null);
+		System.out.println(new String(data));
+	}
 	
 }
